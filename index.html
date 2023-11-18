@@ -141,44 +141,39 @@ body { margin: 0; padding: 0; }
         window.requestAnimationFrame(frame);
     });
 
-    map.addSource('multiple-points', {
-    type: 'geojson',
-    data: {
-        type: 'FeatureCollection',
-        features: [
-            {
-                type: 'Feature',
-                geometry: {
-                    type: 'Point',
-                    coordinates: [7.6077318, 47.56750118] // Coordinates for point 1
-                },
-                properties: {
-                    title: 'Point 1'
-                }
-            },
-            // Add more features as needed
-        ]
-    }
-});
+    map.on('style.load', () => {
+    // ... existing code to add sources and layers ...
 
-map.addLayer({
-    id: 'points',
-    source: 'multiple-points',
-    type: 'symbol',
-    layout: {
-        // This icon image will depend on what's available in your style or any custom images you add
-        'icon-image': 'marker-15',
-        // This allows you to use the 'title' property in the 'properties' of each feature as a label
-        'text-field': ['get', 'title'],
-        'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
-        'text-offset': [0, 0.6],
-        'text-anchor': 'top'
-    },
-    paint: {
-        'text-color': '#202',
-        'text-halo-color': '#fff',
-        'text-halo-width': 2
-    }
+    // Now, let's add a point
+    map.addSource('single-point', {
+        type: 'geojson',
+        data: {
+            type: 'Feature',
+            geometry: {
+                type: 'Point',
+                // Example coordinates where you want the point to appear
+                coordinates: [7.6077318, 47.56750118]
+            },
+            properties: {
+                title: 'Point 1'
+            }
+        }
+    });
+
+    map.addLayer({
+        id: 'point',
+        source: 'single-point',
+        type: 'circle',
+        paint: {
+            // The color of the circle
+            'circle-color': '#4264fb',
+            // The radius of the circle
+            'circle-radius': 8,
+            // Border of the circle
+            'circle-stroke-width': 2,
+            'circle-stroke-color': '#ffffff'
+        }
+    });
 });
 
 </script>
