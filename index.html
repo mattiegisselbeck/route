@@ -195,7 +195,20 @@ body { margin: 0; padding: 0; }
         }
     });
 
-    // ... rest of the animation frame code ...
+      map.addLayer({
+        id: 'points',
+        type: 'circle',
+        source: 'points',
+        paint: {
+             // The color of the circle
+            'circle-color': '#4264fb',
+            // The radius of the circle
+            'circle-radius': 8,
+            // Border of the circle
+            'circle-stroke-width': 2,
+            'circle-stroke-color': '#ffffff'
+        }
+    });
 });
 
 
