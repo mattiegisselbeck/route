@@ -141,8 +141,12 @@ body { margin: 0; padding: 0; }
         window.requestAnimationFrame(frame);
     });
 
-    map.on('style.load', () => {
-    // ... existing code to add sources and layers ...
+    map.on('load', () => {
+    map.addSource('points', {
+        type: 'geojson',
+        data: geojson
+    });
+    // ... rest of the code ...
 
     // Now, let's add a point
     map.addSource('multiple-points', {
