@@ -168,23 +168,23 @@ body { margin: 0; padding: 0; }
 
     map.addLayer({
     id: 'points',
-    source: 'multiple-points',
     type: 'symbol',
+    source: 'points',
     layout: {
-        // This icon image will depend on what's available in your style or any custom images you add
-        'icon-image': 'marker-15',
-        // This allows you to use the 'title' property in the 'properties' of each feature as a label
-        'text-field': ['get', 'title'],
+        'icon-image': 'marker-15', // Use a predefined marker image
+        'icon-size': 1.5, // Size of the marker
+        'text-field': ['get', 'title'], // Use the title from properties as a label
         'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
         'text-offset': [0, 0.6],
         'text-anchor': 'top'
     },
     paint: {
-        'text-color': '#202',
-        'text-halo-color': '#fff',
-        'text-halo-width': 2
+        'text-color': 'black',
+        'text-halo-color': 'white',
+        'text-halo-width': 1
     }
 });
+
 });
 
 </script>
