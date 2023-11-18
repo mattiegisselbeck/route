@@ -142,15 +142,10 @@ body { margin: 0; padding: 0; }
     });
 
     map.on('load', () => {
-    map.addSource('points', {
-        type: 'geojson',
-        data: geojson
-    });
-    // ... rest of the code ...
+    // ... other initialization code ...
 
-    // Now, let's add a point
-    map.addSource('multiple-points', {
-        type: 'geojson',
+    const geojson = {
+        type: 'FeatureCollection',
         features: [
             {
                 type: 'Feature',
@@ -162,30 +157,47 @@ body { margin: 0; padding: 0; }
                     title: 'Point 1'
                 }
             },
+            {
+                type: 'Feature',
+                geometry: {
+                    type: 'Point',
+                    coordinates: [7.590192528, 47.54765305] // Coordinates for point 2
+                },
+                properties: {
+                    title: 'Point 2'
+                }
+            }
             // Add more features as needed
         ]
+    };
+
+    map.addSource('points', {
+        type: 'geojson',
+        data: geojson
     });
 
     map.addLayer({
-    id: 'points',
-    type: 'symbol',
-    source: 'points',
-    layout: {
-        'icon-image': 'marker-15', // Use a predefined marker image
-        'icon-size': 1.5, // Size of the marker
-        'text-field': ['get', 'title'], // Use the title from properties as a label
-        'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
-        'text-offset': [0, 0.6],
-        'text-anchor': 'top'
-    },
-    paint: {
-        'text-color': 'black',
-        'text-halo-color': 'white',
-        'text-halo-width': 1
-    }
+        id: 'points',
+        type: 'symbol',
+        source: 'points',
+        layout: {
+            'icon-image': 'marker-15', // Use a predefined marker image
+            'icon-size': 1.5, // Size of the marker
+            'text-field': ['get', 'title'], // Use the title from properties as a label
+            'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+            'text-offset': [0, 0.6],
+            'text-anchor': 'top'
+        },
+        paint: {
+            'text-color': 'black',
+            'text-halo-color': 'white',
+            'text-halo-width': 1
+        }
+    });
+
+    // ... rest of the animation frame code ...
 });
 
-});
 
 </script>
 
