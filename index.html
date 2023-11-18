@@ -17,71 +17,6 @@ body { margin: 0; padding: 0; }
 <script src="assets/routes.js"></script>
 <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
 <script>
-    // Define the GeoJSON data
-    const geojson = {
-        type: 'FeatureCollection',
-        features: [
-            {
-                type: 'Feature',
-                geometry: {
-                    type: 'Point',
-                    coordinates: [7.6077318, 47.56750118] // Coordinates for point 1
-                },
-                properties: {
-                    title: 'Point 1'
-                }
-            },
-            {
-                type: 'Feature',
-                geometry: {
-                    type: 'Point',
-                    coordinates: [7.590192528, 47.54765305] // Coordinates for point 2
-                },
-                properties: {
-                    title: 'Point 2'
-                }
-            },
-            // Add more points as needed
-        ]
-    };
-
-    // ... existing script for map initialization ...
-
-    map.on('load', () => {
-        // ... existing code to set up the map and add layers ...
-
-        // Add the GeoJSON as a source to your map
-        map.addSource('points', {
-            type: 'geojson',
-            data: geojson
-        });
-
-        // Create a layer that references the 'points' source
-        map.addLayer({
-            id: 'points',
-            type: 'symbol',
-            source: 'points',
-            layout: {
-                'icon-image': 'marker-15', // Use a predefined marker image
-                'icon-size': 1.5, // Size of the marker
-                'text-field': ['get', 'title'], // Use the title from properties as a label
-                'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
-                'text-offset': [0, 0.6],
-                'text-anchor': 'top'
-            },
-            paint: {
-                'text-color': 'black',
-                'text-halo-color': 'white',
-                'text-halo-width': 1
-            }
-        });
-
-        // ... rest of the existing 'load' event listener ...
-    });
-
-    // ... any additional JavaScript ...
-</script>
-<script>
 	mapboxgl.accessToken = 'pk.eyJ1IjoibWF0dGllZ2lzc2VsYmVjayIsImEiOiJjbG5hcmhvOWMwMHVhMmtsaW04M3dqb2N6In0.KDF-cF60UnFy3r1hGWlWfQ';
     const map = new mapboxgl.Map({
         container: 'map',
@@ -206,8 +141,45 @@ body { margin: 0; padding: 0; }
         window.requestAnimationFrame(frame);
     });
 
+    map.addSource('multiple-points', {
+    type: 'geojson',
+    data: {
+        type: 'FeatureCollection',
+        features: [
+            {
+                type: 'Feature',
+                geometry: {
+                    type: 'Point',
+                    coordinates: [7.6077318, 47.56750118] // Coordinates for point 1
+                },
+                properties: {
+                    title: 'Point 1'
+                }
+            },
+            // Add more features as needed
+        ]
+    }
+});
 
-
+map.addLayer({
+    id: 'points',
+    source: 'multiple-points',
+    type: 'symbol',
+    layout: {
+        // This icon image will depend on what's available in your style or any custom images you add
+        'icon-image': 'marker-15',
+        // This allows you to use the 'title' property in the 'properties' of each feature as a label
+        'text-field': ['get', 'title'],
+        'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+        'text-offset': [0, 0.6],
+        'text-anchor': 'top'
+    },
+    paint: {
+        'text-color': '#202',
+        'text-halo-color': '#fff',
+        'text-halo-width': 2
+    }
+});
 
 </script>
 
