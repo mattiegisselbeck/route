@@ -15,6 +15,7 @@ body { margin: 0; padding: 0; }
 <div id="map"></div>
 
 <script src="assets/routes.js"></script>
+<script src="assets/points.js"></script>
 <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
 <script>
 	mapboxgl.accessToken = 'pk.eyJ1IjoibWF0dGllZ2lzc2VsYmVjayIsImEiOiJjbG5hcmhvOWMwMHVhMmtsaW04M3dqb2N6In0.KDF-cF60UnFy3r1hGWlWfQ';
@@ -141,40 +142,33 @@ body { margin: 0; padding: 0; }
         window.requestAnimationFrame(frame);
     });
 
-    map.on('style.load', () => {
-    // ... existing code to add sources and layers ...
-
-    // Now, let's add a point
-    map.addSource('single-point', {
+    map.on('load', () => {
+    map.addSource('points', {
         type: 'geojson',
-        data: {
-            type: 'Feature',
-            geometry: {
-                type: 'Point',
-                // Example coordinates where you want the point to appear
-                coordinates: [7.6077318, 47.56750118]
-            },
-            properties: {
-                title: 'Point 1'
-            }
-        }
+        data: geojson
     });
-
-    map.addLayer({
-        id: 'point',
-        source: 'single-point',
-        type: 'circle',
-        paint: {
-            // The color of the circle
-            'circle-color': '#4264fb',
-            // The radius of the circle
-            'circle-radius': 8,
-            // Border of the circle
-            'circle-stroke-width': 2,
-            'circle-stroke-color': '#ffffff'
-        }
-    });
+    // ... rest of the code ...
 });
+
+map.addLayer({
+    id: 'points',
+    type: 'symbol',
+    source: 'points',
+    layout: {
+        'icon-image': 'marker-15', // Use a predefined marker image
+        'icon-size': 1.5, // Size of the marker
+        'text-field': ['get', 'title'], // Use the title from properties as a label
+        'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
+        'text-offset': [0, 0.6],
+        'text-anchor': 'top'
+    },
+    paint: {
+        'text-color': 'black',
+        'text-halo-color': 'white',
+        'text-halo-width': 1
+    }
+});
+
 
 </script>
 
