@@ -176,14 +176,28 @@ body { margin: 0; padding: 0; }
         data: geojson
     });
 
+    // Adding circle layer for the points
     map.addLayer({
-        id: 'points',
+        id: 'circle-points', // Changed the ID to be unique
+        type: 'circle',
+        source: 'points',
+        paint: {
+            'circle-color': '#4264fb',
+            'circle-radius': 8,
+            'circle-stroke-width': 2,
+            'circle-stroke-color': '#ffffff'
+        }
+    });
+
+    // If you want to add a symbol layer as well
+    map.addLayer({
+        id: 'symbol-points', // Unique ID for the symbol layer
         type: 'symbol',
         source: 'points',
         layout: {
             'icon-image': 'marker-15', // Use a predefined marker image
-            'icon-size': 1.5, // Size of the marker
-            'text-field': ['get', 'title'], // Use the title from properties as a label
+            'icon-size': 1.5,
+            'text-field': ['get', 'title'],
             'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
             'text-offset': [0, 0.6],
             'text-anchor': 'top'
@@ -195,25 +209,7 @@ body { margin: 0; padding: 0; }
         }
     });
 });
-    map.addSource('points', {
-        type: 'geojson',
-        data: geojson
-    });
 
-      map.addLayer({
-        id: 'points',
-        type: 'circle',
-        source: 'points',
-        paint: {
-             // The color of the circle
-            'circle-color': '#4264fb',
-            // The radius of the circle
-            'circle-radius': 8,
-            // Border of the circle
-            'circle-stroke-width': 2,
-            'circle-stroke-color': '#ffffff'
-        }
-    });
 
 
 
