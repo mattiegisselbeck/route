@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Animate the camera around a point with 3D terrain</title>
+<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+<link href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
+<style>
+body { margin: 0; padding: 0; }
+#map { position: absolute; top: 0; bottom: 0; width: 100%; }
+</style>
+</head>
+<body>
+<div id="map"></div>
+
+<script>
+	mapboxgl.accessToken = 'pk.eyJ1IjoibWF0dGllZ2lzc2VsYmVjayIsImEiOiJjbG5hcmhvOWMwMHVhMmtsaW04M3dqb2N6In0.KDF-cF60UnFy3r1hGWlWfQ';
+    const map = new mapboxgl.Map({
+        container: 'map',
+        zoom: 11.53,
+        center: [7.650273329021414, 46.00201547270647],
+        pitch: 76,
+        bearing: -177.2,
+        // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
+        style: 'mapbox://styles/mapbox/satellite-v9',
+        interactive: false
+    });
+
+    map.on('style.load', () => {
+        map.setFog({}); // Set the default atmosphere style
+
+        // Add terrain
+        map.addSource('mapbox-dem', {
+            'type': 'raster-dem',
+            'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
+            'tileSize': 512,
+            'maxzoom': 14
+        });
+        map.setTerrain({ 'source': 'mapbox-dem', 'exaggeration': 1.5 });
+    });
+
+    function updateCameraPosition(position, altitude, target) {
+        const camera = map.getFreeCameraOptions();
+
+        camera.position = mapboxgl.MercatorCoordinate.fromLngLat(
+            position,
+            altitude
+        );
+        camera.lookAtPoint(target);
+
+        map.setFreeCameraOptions(camera);
+    }
+
+    let animationIndex = 0;
+    let animationTime = 0.0;
+
+    // wait for the terrain to load before starting animations
+    map.once('idle', () => {
+        // linearly interpolate between two altitudes/positions based on time
+        const lerp = (a, b, t) => {
+            if (Array.isArray(a) && Array.isArray(b)) {
+                const result = [];
+                for (let i = 0; i < Math.min(a.length, b.length); i++)
+                    result[i] = a[i] * (1.0 - t) + b[i] * t;
+                return result;
+            } else {
+                return a * (1.0 - t) + b * t;
+            }
+        };
+
+        const animations = [
+            {
+                duration: 20000.0,
+                animate: (phase) => {
+                    const start = [7.71907178086462, 45.98688306477757];
+                    const end = [7.644935354526396, 45.97016663943661];
+                    const alt = [7000.0, 6000.0];
+
+                    // interpolate camera position while keeping focus on a target lat/lng
+                    const position = lerp(start, end, phase);
+                    const altitude = lerp(alt[0], alt[1], phase);
+                    const target = [7.657792751957117, 45.9766259585069];
+
+                    updateCameraPosition(position, altitude, target);
+                }
+            },
+            {
+                duration: 15000.0,
+                animate: (phase) => {
+                    const start = [7.644935354526396, 45.97016663943661];
+                    const end = [7.657365008354568, 45.967758512117584];
+                    const alt = [6000.0, 6000.0];
+                    const target1 = [7.657792751957117, 45.9766259585069];
+                    const target2 = [7.681670223836059, 45.97226276570122];
+
+                    // interpolate both the camera position and target
+                    const position = lerp(start, end, phase);
+                    const altitude = lerp(alt[0], alt[1], phase);
+                    const target = lerp(target1, target2, phase);
+
+                    updateCameraPosition(position, altitude, target);
+                }
+            },
+            {
+                duration: 15000.0,
+                animate: (phase) => {
+                    // create easing function for the animation
+                    const easeInOutQuad = (t) => {
+                        return t < 0.5
+                            ? 2.0 * t * t
+                            : (4.0 - 2.0 * t) * t - 1.0;
+                    };
+                    const start = [7.657365008354568, 45.967758512117584];
+                    const end = [7.71907178086462, 45.98688306477757];
+                    const alt = [6000.0, 7000.0];
+                    const target1 = [7.681670223836059, 45.97226276570122];
+                    const target2 = [7.657792751957117, 45.9766259585069];
+
+                    // interpolate both the camera position and target
+                    const position = lerp(start, end, easeInOutQuad(phase));
+                    const altitude = lerp(alt[0], alt[1], phase);
+                    const target = lerp(target1, target2, phase);
+
+                    updateCameraPosition(position, altitude, target);
+                }
+            }
+        ];
+
+        let lastTime = 0.0;
+        function frame(time) {
+            animationIndex %= animations.length;
+            const current = animations[animationIndex];
+
+            if (animationTime < current.duration) {
+                // Normalize the duration between 0 and 1 to interpolate the animation
+                const phase = animationTime / current.duration;
+                current.animate(phase);
+            }
+
+            // Elasped time since last frame, in milliseconds
+            const elapsed = time - lastTime;
+            animationTime += elapsed;
+            lastTime = time;
+
+            if (animationTime > current.duration) {
+                animationIndex++;
+                animationTime = 0.0;
+            }
+
+            window.requestAnimationFrame(frame);
+        }
+
+        window.requestAnimationFrame(frame);
+    });
+</script>
+
+</body>
+</html>
